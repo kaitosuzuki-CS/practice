@@ -44,17 +44,17 @@ if __name__ == "__main__":
 
     model_hps, train_hps = load_hps(model_config_path, train_config_path)
 
-    # train_loader, val_loader = create_dataset(train_hps.data)  # type: ignore
+    train_loader, val_loader = create_dataset(train_hps.data)  # type: ignore
 
-    # set_seeds(train_hps)
+    set_seeds(train_hps)
 
-    # if scheme == "composite":
-    #     model = VAE(model_hps.model_config)  # type: ignore
-    #     discriminator = PatchDiscriminator(model_hps.discriminator_config)  # type: ignore
-    #     pips = VGG_PIPS()
-    #     train_with_composite(
-    #         model, discriminator, pips, train_hps, train_loader, device
-    #     )
-    # else:
-    #     model = VAE(model_hps.model_config)  # type: ignore
-    #     train_without_composite(model, train_hps, train_loader, device)
+    if scheme == "composite":
+        model = VAE(model_hps.model_config)  # type: ignore
+        discriminator = PatchDiscriminator(model_hps.discriminator_config)  # type: ignore
+        pips = VGG_PIPS()
+        train_with_composite(
+            model, discriminator, pips, train_hps, train_loader, device
+        )
+    else:
+        model = VAE(model_hps.model_config)  # type: ignore
+        train_without_composite(model, train_hps, train_loader, device)
