@@ -79,14 +79,14 @@ betavae/
 
     ```bash
     conda env create -f environment.yml
-    conda activate betavae_comp
+    conda activate betavae_comploss
     ```
 
     **Using Pip:**
 
     ```bash
-    conda create -n betavae_comp python=3.14
-    conda activate betavae_comp
+    conda create -n betavae_comploss python=3.14
+    conda activate betavae_comploss
     pip install -r requirements.txt
     ```
 
