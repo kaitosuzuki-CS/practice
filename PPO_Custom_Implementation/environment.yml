@@ -1,4 +1,4 @@
-name: PPO_Custom_Implementation
+name: ppo_custom_implementation
 channels:
   - defaults
 dependencies:
