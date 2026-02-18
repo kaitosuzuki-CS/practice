@@ -84,15 +84,21 @@ Ensure you have [Anaconda](https://www.anaconda.com/) or [Miniconda](https://doc
     cd Practice/PPO_Custom_Implementation
     ```
 
-2.  **Create the Conda environment**:
+2.  **Install dependencies**:
+
+    **Option 1: Using Conda**
 
     ```bash
     conda env create -f environment.yml
+    conda activate ppo_custom_implementation
     ```
 
-3.  **Activate the environment**:
+    **Option 2: Using Pip**
+
     ```bash
+    conda create -n ppo_custom_implementation python=3.12
     conda activate ppo_custom_implementation
+    pip install -r requirements.txt
     ```
 
 ### Usage
