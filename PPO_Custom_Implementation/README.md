@@ -92,7 +92,7 @@ Ensure you have [Anaconda](https://www.anaconda.com/) or [Miniconda](https://doc
 
 3.  **Activate the environment**:
     ```bash
-    conda activate PPO
+    conda activate ppo_custom_implementation
     ```
 
 ### Usage
