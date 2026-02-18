@@ -57,4 +57,3 @@ dependencies:
       - urllib3==2.6.3
       - wrapt==2.1.1
       - zipp==3.23.0
-prefix: /Users/kaitosuzuki/miniconda3/envs/PPO
