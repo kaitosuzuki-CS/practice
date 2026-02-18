@@ -3,9 +3,6 @@ import os
 from pathlib import Path
 
 import torch
-from torch.optim import Adam
-from tqdm import tqdm
-from transformers.optimization import get_cosine_schedule_with_warmup
 
 from model.discriminator import PatchDiscriminator
 from model.pips import VGG_PIPS

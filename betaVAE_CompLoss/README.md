@@ -73,9 +73,21 @@ betavae/
     cd Practice/betaVAE_CompLoss
     ```
 
-2.  Install dependencies (ensure you have PyTorch installed suitable for your hardware):
+2.  Set up the environment:
+
+    **Using Conda (recommended):**
+
     ```bash
-    pip install torch torchvision numpy matplotlib
+    conda env create -f environment.yml
+    conda activate betavae_comp
+    ```
+
+    **Using Pip:**
+
+    ```bash
+    conda create -n betavae_comp python=3.14
+    conda activate betavae_comp
+    pip install -r requirements.txt
     ```
 
 ### Training
