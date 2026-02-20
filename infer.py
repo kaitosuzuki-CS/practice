@@ -2,9 +2,8 @@ import argparse
 
 import torch
 
-from recursive_vit import RecursiveViT
-from utils.dataset import create_dataset
-from utils.misc import load_config, set_seeds
+from model import RecursiveViT
+from utils import create_dataset, load_config, set_seeds
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
