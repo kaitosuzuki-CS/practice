@@ -133,7 +133,7 @@ class RecursiveViT:
 
             if num_batches % self.accum_steps != 0:
                 optim.step()
-                optim.zero_grad()
+                optim.zero_grad(set_to_none=True)
 
                 if scheduler is not None:
                     scheduler.step()
