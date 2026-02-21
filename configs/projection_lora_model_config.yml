@@ -13,4 +13,4 @@ block:
   alpha: 8
   bias: True
   dropout: 0.1
-  learnable: True
+  proj_lora: True

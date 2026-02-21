@@ -14,7 +14,7 @@ class LoRALinear(nn.Module):
         bias=True,
         t_embed_dim=128,
         max_numsteps=8,
-        learnable=False,
+        proj_lora=False,
     ):
         super(LoRALinear, self).__init__()
 
@@ -25,14 +25,14 @@ class LoRALinear(nn.Module):
         self._bias = bias
         self.t_embed_dim = t_embed_dim
         self._max_numsteps = max_numsteps
-        self._learnable = learnable
+        self._proj_lora = proj_lora
 
         self.weight = nn.Parameter(torch.randn(self._out_features, self._in_features))
         self.bias = nn.Parameter(torch.randn(self._out_features)) if bias else None
 
-        if learnable:
-            self.learnable_lora_B = nn.Linear(t_embed_dim, r * out_features, bias=False)
-            self.learnable_lora_A = nn.Linear(t_embed_dim, r * in_features, bias=False)
+        if proj_lora:
+            self.proj_lora_lora_B = nn.Linear(t_embed_dim, r * out_features, bias=False)
+            self.proj_lora_lora_A = nn.Linear(t_embed_dim, r * in_features, bias=False)
         else:
             self.lora_B = nn.Parameter(torch.zeros(max_numsteps, out_features, r))
             self.lora_A = nn.Parameter(torch.zeros(max_numsteps, r, in_features))
@@ -42,17 +42,17 @@ class LoRALinear(nn.Module):
         if self.bias is not None:
             nn.init.zeros_(self.bias)
 
-        if self._learnable:
-            nn.init.zeros_(self.learnable_lora_B.weight)
-            nn.init.zeros_(self.learnable_lora_A.weight)
+        if self._proj_lora:
+            nn.init.zeros_(self.proj_lora_lora_B.weight)
+            nn.init.zeros_(self.proj_lora_lora_A.weight)
 
     def forward(self, x, t):
         batch_size, N, D = x.shape
 
         B = A = None
-        if self._learnable:
-            B = self.learnable_lora_B(t).view(self._out_features, self._r)  # type: ignore
-            A = self.learnable_lora_A(t).view(self._r, self._in_features)  # type: ignore
+        if self._proj_lora:
+            B = self.proj_lora_lora_B(t).view(self._out_features, self._r)  # type: ignore
+            A = self.proj_lora_lora_A(t).view(self._r, self._in_features)  # type: ignore
         else:
             B = self.lora_B[t]  # type: ignore
             A = self.lora_A[t]  # type: ignore
@@ -73,7 +73,7 @@ class LoRALinearLayer(nn.Module):
         bias=True,
         t_embed_dim=128,
         max_numsteps=8,
-        learnable=False,
+        proj_lora=False,
         dropout=0,
     ):
         super(LoRALinearLayer, self).__init__()
@@ -85,7 +85,7 @@ class LoRALinearLayer(nn.Module):
         self._bias = bias
         self._t_embed_dim = t_embed_dim
         self._max_numsteps = max_numsteps
-        self._learnable = learnable
+        self._proj_lora = proj_lora
         self._dropout = dropout
 
         self.in_layer = LoRALinear(
@@ -96,7 +96,7 @@ class LoRALinearLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
         self.act = nn.GELU()
         self.dropout = nn.Dropout(dropout)
@@ -108,7 +108,7 @@ class LoRALinearLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
 
     def init_weights(self):
@@ -134,7 +134,7 @@ class LoRAAttentionLayer(nn.Module):
         bias=True,
         t_embed_dim=128,
         max_numsteps=8,
-        learnable=False,
+        proj_lora=False,
         dropout=0,
     ):
         super(LoRAAttentionLayer, self).__init__()
@@ -147,7 +147,7 @@ class LoRAAttentionLayer(nn.Module):
         self._bias = bias
         self._t_embed_dim = t_embed_dim
         self._max_numsteps = max_numsteps
-        self._learnable = learnable
+        self._proj_lora = proj_lora
         self._dropout = dropout
 
         self.q_proj = LoRALinear(
@@ -158,7 +158,7 @@ class LoRAAttentionLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
         self.k_proj = LoRALinear(
             in_features=embed_dim,
@@ -168,7 +168,7 @@ class LoRAAttentionLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
         self.v_proj = LoRALinear(
             in_features=embed_dim,
@@ -178,7 +178,7 @@ class LoRAAttentionLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
         self.dropout = nn.Dropout(dropout)
 
@@ -190,7 +190,7 @@ class LoRAAttentionLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
         )
 
     def init_weights(self):

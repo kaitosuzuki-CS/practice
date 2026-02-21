@@ -15,7 +15,7 @@ class LoRAViTLayer(nn.Module):
         bias=True,
         t_embed_dim=128,
         max_numsteps=8,
-        learnable=False,
+        proj_lora=False,
         dropout=0,
     ):
         super(LoRAViTLayer, self).__init__()
@@ -28,7 +28,7 @@ class LoRAViTLayer(nn.Module):
         self._bias = bias
         self._t_embed_dim = t_embed_dim
         self._max_numsteps = max_numsteps
-        self._learnable = learnable
+        self._proj_lora = proj_lora
         self._dropout = dropout
 
         self.norm_attn = nn.RMSNorm(embed_dim)
@@ -40,7 +40,7 @@ class LoRAViTLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
             dropout=dropout,
         )
         self.dropout_attn = nn.Dropout(dropout)
@@ -54,7 +54,7 @@ class LoRAViTLayer(nn.Module):
             bias=bias,
             t_embed_dim=t_embed_dim,
             max_numsteps=max_numsteps,
-            learnable=learnable,
+            proj_lora=proj_lora,
             dropout=dropout,
         )
         self.dropout_ffn = nn.Dropout(dropout)

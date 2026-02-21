@@ -11,7 +11,7 @@ class LoRAViT(nn.Module):
 
         self._embed_dim = embed_dim
         self._hps = hps
-        self._learnable = hps.block.learnable
+        self._proj_lora = hps.block.proj_lora
 
         self.embedding = Embedding(embed_dim, hps.embedding)
         self.block = LoRAViTBlock(embed_dim, hps.block)
@@ -26,7 +26,7 @@ class LoRAViT(nn.Module):
         B, N, D = x.shape
         t = (
             torch.linspace(0, 1, num_steps, device=x.device)
-            if self._learnable
+            if self._proj_lora
             else range(num_steps)
         )
         for _t in t:

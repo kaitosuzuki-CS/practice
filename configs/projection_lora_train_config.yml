@@ -2,7 +2,7 @@ seed: 42
 num_epochs: 40
 accum_steps: 32
 max_numsteps: 12
-checkpoints_dir: "checkpoints/lora_learnable"
+checkpoints_dir: "checkpoints/lora_proj_lora"
 checkpoints_freq: 10
 loss: null
 optimizer:

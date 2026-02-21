@@ -25,9 +25,9 @@ class LoRAViTBlock(nn.Module):
 
         self._embed_dim = embed_dim
         self._hps = hps
-        self._learnable = hps.learnable
+        self._proj_lora = hps.proj_lora
 
-        if self._learnable:
+        if self._proj_lora:
             self._t_embed_dim = hps.t_embed_dim
             self.t_proj = nn.Sequential(
                 nn.Linear(hps.t_embed_dim, hps.t_embed_dim),
@@ -46,7 +46,7 @@ class LoRAViTBlock(nn.Module):
                     bias=hps.bias,
                     t_embed_dim=getattr(hps, "t_embed_dim", 128),  # type: ignore
                     max_numsteps=getattr(hps, "max_numsteps", 8),
-                    learnable=hps.learnable,
+                    proj_lora=hps.proj_lora,
                     dropout=hps.dropout,
                 )
                 for _ in range(hps.num_layers)
@@ -54,7 +54,7 @@ class LoRAViTBlock(nn.Module):
         )
 
     def init_weights(self):
-        if self._learnable:
+        if self._proj_lora:
             for m in self.t_proj.modules():
                 if isinstance(m, nn.Linear):
                     nn.init.kaiming_normal_(
@@ -67,7 +67,7 @@ class LoRAViTBlock(nn.Module):
             layer.init_weights()  # type: ignore
 
     def forward(self, x, t):
-        if self._learnable:
+        if self._proj_lora:
             t = get_t_emb(t, self._t_embed_dim)
             t = self.t_proj(t)
 
