@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from vit import AdaLNViT, LoRAViT
+
+from .vit import AdaLNViT, LoRAViT
 
 
 class LoRAClassifier(nn.Module):

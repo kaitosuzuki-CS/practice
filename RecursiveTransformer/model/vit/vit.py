@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 
-from model.components import Embedding
-from model.vit import AdaLNViTBlock, LoRAViTBlock
+from ..components import Embedding
+from .blocks import AdaLNViTBlock, LoRAViTBlock
 
 
 class LoRAViT(nn.Module):

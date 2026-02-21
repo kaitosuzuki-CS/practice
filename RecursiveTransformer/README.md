@@ -88,7 +88,7 @@ pip install -r requirements.txt
 ### Running Training
 
 ```bash
-python scripts/train.py --version lora --model-config-path configs/lora_model_config.yml --train-config-path configs/lora_train_config.yml
+python -m scripts.train --version lora --model-config-path configs/lora_model_config.yml --train-config-path configs/lora_train_config.yml
 ```
 
 ## Project Files

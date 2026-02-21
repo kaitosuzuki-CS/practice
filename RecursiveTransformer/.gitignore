@@ -39,3 +39,5 @@ venv/
 env/
 
 test.py
+checkpoints/
+data/

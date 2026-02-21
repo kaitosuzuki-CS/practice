@@ -11,7 +11,7 @@ from transformers.optimization import get_cosine_schedule_with_warmup
 from model import AdaLNClassifier, LoRAClassifier
 from utils import EarlyStopping, set_seeds
 
-parent_dir = Path(__file__).resolve().parent
+parent_dir = Path(__file__).resolve().parent.parent
 
 
 class RecursiveViT:

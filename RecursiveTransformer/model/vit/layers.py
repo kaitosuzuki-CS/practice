@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from model.components import AdaLN, LinearLayer, LoRAAttentionLayer, LoRALinearLayer
+from ..components import AdaLN, LinearLayer, LoRAAttentionLayer, LoRALinearLayer
 
 
 class LoRAViTLayer(nn.Module):

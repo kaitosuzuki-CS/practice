@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from model.vit import AdaLNViTLayer, LoRAViTLayer
+from .layers import AdaLNViTLayer, LoRAViTLayer
 
 
 def get_t_emb(t, t_embed_dim):
