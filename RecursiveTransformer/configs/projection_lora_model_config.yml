@@ -1,0 +1,16 @@
+num_classes: 10
+embed_dim: 64
+embedding:
+  im_channels: 1
+  patch_size: [4, 4]
+  max_len: 128
+block:
+  hidden_dim: 256
+  num_heads: 16
+  t_embed_dim: 128
+  num_layers: 1
+  r: 4
+  alpha: 8
+  bias: True
+  dropout: 0.1
+  proj_lora: True
