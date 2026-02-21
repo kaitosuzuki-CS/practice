@@ -45,7 +45,6 @@ if __name__ == "__main__":
 
     hps = load_config(model_config_path)
     train_hps = load_config(train_config_path)
-    set_seeds(getattr(train_hps, "seed", 42))
 
     train_loader, val_loader = create_dataset(train_hps.data)  # type:ignore
     model = RecursiveViT(hps, train_hps, train_loader, val_loader, device, version)
