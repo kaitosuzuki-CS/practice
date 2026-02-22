@@ -73,12 +73,9 @@ class RecursiveViT:
 
         scheduler = None
         if self.scheduler_hps is not None:
-            num_training_steps = int(
-                self.num_epochs * np.ceil(len(self._train_loader) / self.accum_steps)
-            )
-            num_warmup_steps = int(
-                self.warmup_epochs * np.ceil(len(self._train_loader) / self.accum_steps)
-            )
+            num_steps_per_epoch = np.ceil(len(self._train_loader) / self.accum_steps)
+            num_warmup_steps = int(self.warmup_epochs * num_steps_per_epoch)
+            num_training_steps = int(self.num_epochs * num_steps_per_epoch)
             scheduler = get_cosine_schedule_with_warmup(
                 optim,
                 num_warmup_steps=num_warmup_steps,
