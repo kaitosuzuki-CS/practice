@@ -61,7 +61,7 @@ class RecursiveViT:
         )
         self.checkpoints_freq = int(self._train_hps.checkpoints_freq)
 
-        self.seed = getattr(self._train_hps, "seed", 42)
+        self.seed = int(getattr(self._train_hps, "seed", 42))
 
     def _init_training_scheme(self):
         optim = Adam(
