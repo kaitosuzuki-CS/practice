@@ -64,7 +64,7 @@ Configurations are managed via YAML files in the `configs/` directory, allowing 
 ### Clone the Repo
 
 ```bash
-git clone https://github.com/kaitosuzuki-CS/Practice.git
+git clone https://github.com/kaitosuzuki-CS/practice.git
 cd Practice/RecursiveTransformer
 ```
 
