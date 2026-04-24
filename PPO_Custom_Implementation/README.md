@@ -80,7 +80,7 @@ Ensure you have [Anaconda](https://www.anaconda.com/) or [Miniconda](https://doc
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/Practice.git
+    git clone https://github.com/kaitosuzuki-CS/practice.git
     cd Practice/PPO_Custom_Implementation
     ```
 
