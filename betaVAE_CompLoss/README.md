@@ -69,7 +69,7 @@ betavae/
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/Practice.git
+    git clone https://github.com/kaitosuzuki-CS/practice.git
     cd Practice/betaVAE_CompLoss
     ```
 
