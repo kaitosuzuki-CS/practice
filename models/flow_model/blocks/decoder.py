@@ -89,6 +89,26 @@ class DecoderLayer(nn.Module):
         else:
             self.upsample_layer = nn.Identity()
 
+    def init_weights(self):
+        for layer in [self.upsample_layer]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+                if isinstance(m, nn.GroupNorm):
+                    nn.init.ones_(m.weight)
+                    nn.init.zeros_(m.bias)
+
+        self.residual_block.init_weights()
+        self.attn_block.init_weights()
+
+        for res_block, attn_block in self.layers:  # type: ignore
+            res_block.init_weights()
+            attn_block.init_weights()
+
     def forward(self, x, t_emb, c_emb, skip_connection):
         """
         Args:
@@ -141,6 +161,10 @@ class DecoderBlock(nn.Module):
             ]
         )
 
+    def init_weights(self):
+        for layer in self.layers:
+            layer.init_weights()  # type: ignore
+
     def forward(self, x, t_emb, c_emb, skip_connections):
         """
         Args:
@@ -189,6 +213,21 @@ class Decoder(nn.Module):
                 padding=1,
             ),
         )
+
+    def init_weights(self):
+        for layer in [self.out_conv]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+                if isinstance(m, nn.GroupNorm):
+                    nn.init.ones_(m.weight)
+                    nn.init.zeros_(m.bias)
+
+        self.decoder_block.init_weights()
 
     def forward(self, x, t_emb, c_emb, skip_connections):
         """

@@ -69,6 +69,13 @@ class BottleneckLayer(nn.Module):
             ]
         )
 
+    def init_weights(self):
+        self.residual_block.init_weights()
+
+        for attn_block, res_block in self.layers:  # type: ignore
+            attn_block.init_weights()
+            res_block.init_weights()
+
     def forward(self, x, t_emb, c_emb):
         """
         Args:
@@ -114,6 +121,10 @@ class Bottleneck(nn.Module):
                 for i in range(len(hps.in_channels))
             ]
         )
+
+    def init_weights(self):
+        for layer in self.layers:
+            layer.init_weights()  # type: ignore
 
     def forward(self, x, t_emb, c_emb):
         """

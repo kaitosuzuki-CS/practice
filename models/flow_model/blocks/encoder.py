@@ -89,6 +89,22 @@ class EncoderLayer(nn.Module):
         else:
             self.downsample_layer = nn.Identity()
 
+    def init_weights(self):
+        self.residual_block.init_weights()
+        self.attn_block.init_weights()
+
+        for res_block, attn_block in self.layers:  # type: ignore
+            res_block.init_weights()
+            attn_block.init_weights()
+
+        for layer in [self.downsample_layer]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
     def forward(self, x, t_emb, c_emb):
         """
         Args:
@@ -139,6 +155,10 @@ class EncoderBlock(nn.Module):
             ]
         )
 
+    def init_weights(self):
+        for layer in self.layers:
+            layer.init_weights()  # type: ignore
+
     def forward(self, x, t_emb, c_emb):
         """
         Args:
@@ -179,6 +199,17 @@ class Encoder(nn.Module):
         self.encoder_block = EncoderBlock(
             t_emb_dim=t_emb_dim, c_emb_dim=c_emb_dim, hps=hps
         )
+
+    def init_weights(self):
+        for layer in [self.in_conv]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+        self.encoder_block.init_weights()
 
     def forward(self, x, t_emb, c_emb):
         """

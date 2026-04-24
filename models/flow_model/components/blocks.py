@@ -73,6 +73,28 @@ class ResidualBlock(nn.Module):
             padding=0,
         )
 
+    def init_weights(self):
+        for layer in [
+            self.norm1,
+            self.conv1,
+            self.norm2,
+            self.conv2,
+            self.residual_conv,
+        ]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+                if isinstance(m, nn.GroupNorm):
+                    nn.init.ones_(m.weight)
+                    nn.init.zeros_(m.bias)
+
+        self.adaln1.init_weights()
+        self.adaln2.init_weights()
+
     def forward(self, x, t_emb, c_emb):
         """
         Args:
@@ -135,6 +157,21 @@ class AttentionBlock(nn.Module):
         self.attn = nn.MultiheadAttention(
             embed_dim=channels, num_heads=num_heads, batch_first=True
         )
+
+    def init_weights(self):
+        for layer in [self.norm, self.attn]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+                if isinstance(m, nn.GroupNorm):
+                    nn.init.ones_(m.weight)
+                    nn.init.zeros_(m.bias)
+
+        self.adaln.init_weights()
 
     def forward(self, x, t_emb, c_emb):
         """

@@ -17,6 +17,15 @@ class AdaLN(nn.Module):
             out_features=3 * embed_dim if with_gate else 2 * embed_dim,
         )
 
+    def init_weights(self):
+        for layer in [self.proj]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.zeros_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
     def forward(self, t_emb, c_emb):
         """
         Args:

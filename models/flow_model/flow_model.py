@@ -59,6 +59,24 @@ class FlowModel(nn.Module):
     def _get_c_emb(self, c):
         return F.one_hot(c, num_classes=self.num_classes).float()
 
+    def init_weights(self):
+        for layer in [self.t_proj, self.c_proj]:
+            for m in layer.modules():
+                if isinstance(m, (nn.Linear, nn.Conv2d, nn.ConvTranspose2d)):
+                    nn.init.xavier_uniform_(m.weight)
+
+                    if m.bias is not None:
+                        nn.init.zeros_(m.bias)
+
+        self.encoder.init_weights()
+        self.bottleneck.init_weights()
+        self.decoder.init_weights()
+
+        print(f"Total Parameters: {sum(p.numel() for p in self.parameters())}")
+        print(
+            f"Trainable Parameters: {sum(p.numel() for p in self.parameters() if p.requires_grad)}"
+        )
+
     def forward(self, x, t, c, with_condition=True):
         """
         Args:
