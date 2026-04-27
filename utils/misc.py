@@ -60,7 +60,7 @@ def create_grid(images, labels, nrow=8, padding=4):
     B, C, H, W = images.shape
 
     images = images.clamp(0, 1)
-    images = images.expand(-1, 3, 1, 1)
+    images = images.expand(-1, 3, -1, -1)
 
     grid = make_grid(images, nrow=nrow, padding=padding, pad_value=1.0)
     np_grid = grid.permute(1, 2, 0).numpy()
@@ -86,16 +86,27 @@ def create_grid(images, labels, nrow=8, padding=4):
             va="top",
         )
 
+    return fig, ax
+
 
 def plot_grid(images, labels, nrow=8, padding=4):
-    create_grid(images, labels, nrow, padding)
+    fig, ax = create_grid(images, labels, nrow, padding)
 
-    plt.tight_layout()
+    fig.tight_layout()
     plt.show()
+    plt.close(fig)
 
 
 def save_grid(images, labels, save_path, nrow=8, padding=4, dpi=300):
-    create_grid(images, labels, nrow, padding)
+    fig, ax = create_grid(images, labels, nrow, padding)
 
-    plt.tight_layout()
-    plt.savefig(save_path, dpi=dpi, bbox_inches="tight", pad_inches=0)
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=dpi, bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    x = torch.rand(64, 1, 32, 32)
+    labels = torch.randint(0, 10, (64,))
+
+    save_grid(x, labels, "test.png")

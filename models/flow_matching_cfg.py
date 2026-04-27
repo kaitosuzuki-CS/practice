@@ -10,6 +10,7 @@ from transformers.optimization import get_cosine_schedule_with_warmup
 
 from models.flow_model import FlowModel
 from utils import EarlyStopping, set_seeds
+from utils.misc import save_grid
 
 parent_dir = Path(__file__).resolve().parent.parent
 
@@ -51,6 +52,10 @@ class FlowMatchingCFG:
             parent_dir, str(getattr(self._train_hps, "checkpoint_dir", "checkpoints"))
         )
         self.checkpoint_freq = int(getattr(self._train_hps, "checkpoint_freq", 10))
+
+        self.samples_dir = os.path.join(
+            parent_dir, str(getattr(self._train_hps, "samples_dir", "samples"))
+        )
 
         self.dropout_rate = float(self._train_hps.dropout_rate)
         self.seed = int(getattr(self._train_hps, "seed", 42))
@@ -219,6 +224,10 @@ class FlowMatchingCFG:
         num_timesteps,
         im_size=(32, 32),
         batch_size=None,
+        save_path="results.png",
+        nrow: int = 8,
+        padding: int = 4,
+        dpi: int = 300,
     ):
         set_seeds(self.seed)
         self._init_weights_with_ckpt(ckpt_path, freeze=True)
@@ -260,5 +269,9 @@ class FlowMatchingCFG:
 
         labels = torch.cat(labels, dim=0)
         labels = labels.detach().cpu()
+
+        if save_path is not None:
+            save_path = os.path.join(parent_dir, self.samples_dir, save_path)
+            save_grid(generated_samples, labels, save_path, nrow, padding, dpi)
 
         return generated_samples, labels
