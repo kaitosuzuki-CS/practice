@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from utils import print_parameter_count
+
 from .blocks import Bottleneck, Decoder, Encoder
 
 
@@ -12,6 +14,7 @@ class FlowModel(nn.Module):
 
         self._hps = hps
 
+        self.im_channels = hps.im_channels
         self.t_emb_dim = hps.t_emb_dim
         self.c_emb_dim = hps.c_emb_dim
         self.num_classes = hps.num_classes
@@ -72,10 +75,19 @@ class FlowModel(nn.Module):
         self.bottleneck.init_weights()
         self.decoder.init_weights()
 
-        print(f"Total Parameters: {sum(p.numel() for p in self.parameters())}")
-        print(
-            f"Trainable Parameters: {sum(p.numel() for p in self.parameters() if p.requires_grad)}"
-        )
+        print_parameter_count(self)
+
+    def init_weights_with_ckpt(self, ckpt_path, freeze=True):
+        ckpt = torch.load(ckpt_path)
+        missing_keys, unexpected_keys = self.load_state_dict(ckpt["model_state_dict"])
+
+        if freeze:
+            for p in self.parameters():
+                p.requires_grad = False
+
+        print_parameter_count(self)
+        print(f"Missing Keys: {missing_keys}")
+        print(f"Unexpected Keys: {unexpected_keys}")
 
     def forward(self, x, t, c, with_condition=True):
         """

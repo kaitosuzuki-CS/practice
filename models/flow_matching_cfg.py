@@ -86,6 +86,10 @@ class FlowMatchingCFG:
     def _init_weights(self):
         self.model.init_weights()
 
+    def _init_weights_with_ckpt(self, ckpt_path, freeze=True):
+        ckpt_path = os.path.join(parent_dir, self.checkpoint_dir, ckpt_path)
+        self.model.init_weights_with_ckpt(ckpt_path, freeze)
+
     def move_to_device(self, device):
         self.model = self.model.to(device)
 
@@ -162,7 +166,7 @@ class FlowMatchingCFG:
                     xt = (1 - t[:, None, None, None]) * x0 + t[:, None, None, None] * x1
 
                     if np.random.uniform() < self.dropout_rate:
-                        pred = self.model(xt, t, label, with_condition=False)
+                        pred = self.model(xt, t, None, with_condition=False)
                     else:
                         pred = self.model(xt, t, label, with_condition=True)
 
@@ -207,3 +211,54 @@ class FlowMatchingCFG:
         )
 
         print("Training complete")
+
+    def infer(
+        self,
+        ckpt_path,
+        num_samples,
+        num_timesteps,
+        im_size=(32, 32),
+        batch_size=None,
+    ):
+        set_seeds(self.seed)
+        self._init_weights_with_ckpt(ckpt_path, freeze=True)
+        self.move_to_device(self._device)
+
+        batch_size = batch_size or num_samples
+
+        t = torch.linspace(0, 1, num_timesteps, device=self._device)
+        dt = 1 / num_timesteps
+
+        generated_samples = []
+        labels = []
+
+        self.model.eval()
+        with torch.no_grad():
+            for N in range(0, num_samples, batch_size):
+                B = min(batch_size, num_samples - N)
+
+                xt = torch.randn(self.model.im_channels, *im_size, device=self._device)
+                label = torch.randint(
+                    0, self.model.num_classes, dtype=torch.long, device=self._device
+                )
+
+                for _t in tqdm(t, leave=False):
+                    _t = _t.expand(B)
+                    pred_with_c = self.model(xt, _t, label, with_condition=True)
+                    pred_without_c = self.model(xt, _t, None, with_condition=False)
+
+                    pred = (
+                        (1 + self._hps.beta) * pred_with_c
+                    ) - self._hps.beta * pred_without_c
+                    xt = xt + dt * pred
+
+                generated_samples.append(xt)
+                labels.append(label)
+
+        generated_samples = torch.cat(generated_samples, dim=0)
+        generated_samples = generated_samples.detach().cpu()
+
+        labels = torch.cat(labels, dim=0)
+        labels = labels.detach().cpu()
+
+        return generated_samples, labels

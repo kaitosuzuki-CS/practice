@@ -1,4 +1,3 @@
-import copy
 import math
 import os
 from pathlib import Path
@@ -35,27 +34,6 @@ def load_config(config_path):
     return HPS(config)
 
 
-class EarlyStopping:
-    def __init__(self, patience, min_delta):
-        self.patience = patience
-        self.min_delta = min_delta
-        self.counter = 0
-
-        self.best_loss = float("inf")
-        self.best_model = None
-        self.stop = False
-
-    def __call__(self, model, loss):
-        if loss < self.best_loss - self.min_delta:
-            self.best_loss = loss
-            self.counter = 0
-            self.best_model = copy.deepcopy(model)
-        else:
-            self.counter += 1
-            if self.counter >= self.patience:
-                self.stop = True
-
-
 def set_seeds(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -65,75 +43,59 @@ def set_seeds(seed):
     torch.use_deterministic_algorithms(True, warn_only=True)
 
 
-def plot_grid(img, nrow):
-    img = torch.clamp(img, 0, 1)
-    grid = make_grid(img, nrow=nrow)
-    npimg = grid.cpu().numpy()
+def print_parameter_count(module):
+    print(f"Total Parameters: {sum(p.numel() for p in module.parameters())}")
+    print(
+        f"Trainable Parameters: {sum(p.numel() for p in module.parameters() if p.requires_grad)}"
+    )
 
-    plt.figure(figsize=(8, 8))
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.axis("off")
+
+def create_grid(images, labels, nrow=8, padding=4):
+    """
+    Args:
+        images: (B, C, H, W); C = 1 or 3
+        labels: (B,)
+    """
+
+    B, C, H, W = images.shape
+
+    images = images.clamp(0, 1)
+    images = images.expand(-1, 3, 1, 1)
+
+    grid = make_grid(images, nrow=nrow, padding=padding, pad_value=1.0)
+    np_grid = grid.permute(1, 2, 0).numpy()
+
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.imshow(np_grid)
+    ax.axis("off")
+
+    for i in range(min(images.size(0), labels.size(0))):
+        row = i // nrow
+        col = i % nrow
+
+        x = padding + col * (W + padding) + (W / 2)
+        y = padding + row * (H + padding) + H
+
+        ax.text(
+            x,
+            y,
+            str(labels[i].item()),
+            color="black",
+            fontsize=2 * padding,
+            ha="center",
+            va="top",
+        )
+
+
+def plot_grid(images, labels, nrow=8, padding=4):
+    create_grid(images, labels, nrow, padding)
+
     plt.tight_layout()
     plt.show()
 
 
-def save_grid(img, nrow, save_path):
-    img = torch.clamp(img, 0, 1)
-    grid = make_grid(img, nrow=nrow)
+def save_grid(images, labels, save_path, nrow=8, padding=4, dpi=300):
+    create_grid(images, labels, nrow, padding)
 
-    save_image(grid, save_path)
-
-
-# def plot_grid(img, nrow, col_names=None):
-
-#     img = torch.clamp(img, 0.0, 1.0)
-
-#     n_images = img.size(0)
-#     ncol = nrow
-#     nrows = math.ceil(n_images / ncol)
-
-#     fig, axes = plt.subplots(nrows, ncol, figsize=(2 * ncol, 2 * nrows))
-
-#     if nrows == 1:
-#         axes = np.expand_dims(axes, axis=0)  # type: ignore
-
-#     for idx in range(n_images):
-#         row = idx // ncol
-#         col = idx % ncol
-
-#         npimg = img[idx].cpu().numpy()
-#         if npimg.shape[0] == 1:
-#             axes[row, col].imshow(npimg.squeeze(), cmap="gray", vmin=0, vmax=1)  # type: ignore
-#         else:
-#             axes[row, col].imshow(np.transpose(npimg, (1, 2, 0)))  # type: ignore
-#         axes[row, col].axis("off")  # type: ignore
-
-#         if row == 0 and col_names is not None:
-#             if col == 0:
-#                 axes[row, col].set_title(col_names[col], fontsize=14, fontweight="bold")  # type: ignore
-#             else:
-#                 axes[row, col].set_title(col_names[col], fontsize=14)  # type: ignore
-
-#     for idx in range(n_images, nrows * ncol):
-#         row = idx // ncol
-#         col = idx % ncol
-#         axes[row, col].axis("off")  # type: ignore
-
-#     fig.subplots_adjust(
-#         left=0,
-#         right=1,
-#         top=1,
-#         bottom=0,
-#         wspace=0,
-#         hspace=0,
-#     )
-#     plt.subplots_adjust(wspace=0, hspace=0)
-
-#     plt.show()
-
-
-if __name__ == "__main__":
-    img = torch.randn(64, 1, 32, 32)
-    grid = make_grid(img, 8)
-
-    save_image(grid, "results.pdf")
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=dpi, bbox_inches="tight", pad_inches=0)
