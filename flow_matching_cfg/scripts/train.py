@@ -1,0 +1,41 @@
+import argparse
+import torch
+
+from models import FlowMatchingCFG
+from utils import load_config, create_dataset
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Train Classifier-Free Guidance FLow Matching on MNIST"
+    )
+    parser.add_argument(
+        "--model-config-path",
+        type=str,
+        default="configs/model_config.yml",
+        help="Path to the model config file.",
+    )
+    parser.add_argument(
+        "--train-config-path",
+        type=str,
+        default="configs/train_config.yml",
+        help="Path to the training config file.",
+    )
+
+    args = parser.parse_args()
+    model_config_path = args.model_config_path
+    train_config_path = args.train_config_path
+
+    hps = load_config(model_config_path)
+    train_hps = load_config(train_config_path)
+
+    train_loader, val_loader = create_dataset(train_hps)
+    model = FlowMatchingCFG(
+        hps=hps,
+        train_hps=train_hps,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        device=device,
+    )
+    model.train()
