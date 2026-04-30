@@ -16,7 +16,9 @@ parent_dir = Path(__file__).resolve().parent.parent
 
 
 class FlowMatchingCFG:
-    def __init__(self, hps, train_hps, train_loader, val_loader, device):
+    def __init__(
+        self, hps, train_hps, train_loader=None, val_loader=None, device="cpu"
+    ):
         self._hps = hps
         self._train_hps = train_hps
         self._train_loader = train_loader
@@ -101,6 +103,10 @@ class FlowMatchingCFG:
         print(f"Moved to {device}")
 
     def train(self):
+        assert (
+            self._train_loader and self._val_loader
+        ), "Need to be initialized with dataloaders"
+
         set_seeds(self.seed)
         self._init_weights()
         self.move_to_device(self._device)

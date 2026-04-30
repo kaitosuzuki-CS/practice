@@ -13,13 +13,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model-config-paht",
         type=str,
-        default="configs/flow_matching/model_config.yml",
+        default="configs/model_config.yml",
         help="Path to the model config file.",
     )
     parser.add_argument(
         "--train-config-path",
         type=str,
-        default="configs/flow_matching/train_config.yml",
+        default="configs/train_config.yml",
         help="Path to the training config file.",
     )
 
@@ -31,5 +31,11 @@ if __name__ == "__main__":
     train_hps = load_config(train_config_path)
 
     train_loader, val_loader = create_dataset(train_hps)
-    model = FlowMatchingCFG(hps, train_hps, train_loader, val_loader, device)
+    model = FlowMatchingCFG(
+        hps=hps,
+        train_hps=train_hps,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        device=device,
+    )
     model.train()
