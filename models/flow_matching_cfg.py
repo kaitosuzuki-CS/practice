@@ -89,7 +89,7 @@ class FlowMatchingCFG:
                 num_training_steps=num_training_steps,
             )
 
-        self.early_stopping_hps = None
+        self.early_stopping = None
         if self.early_stopping_hps is not None:
             self.early_stopping = EarlyStopping(
                 patience=self.patience, min_delta=self.min_delta
