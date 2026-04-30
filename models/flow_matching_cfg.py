@@ -189,11 +189,11 @@ class FlowMatchingCFG:
                     loss = ((target - pred) ** 2).mean()
                     val_loss += loss.item()
 
-            train_loss /= len(self._train_loader)
+            total_loss /= len(self._train_loader)
             val_loss /= len(self._val_loader)
 
             print(f"----Epoch {epoch}----")
-            print(f"Train Loss: {train_loss:.6f}, Val Loss: {val_loss:.6f}")
+            print(f"Train Loss: {total_loss:.6f}, Val Loss: {val_loss:.6f}")
             print(f"LR: {self.optim.param_groups[0]['lr']:.6f}")
 
             if epoch % self.checkpoint_freq == 0:
