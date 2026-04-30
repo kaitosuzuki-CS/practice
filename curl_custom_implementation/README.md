@@ -80,8 +80,10 @@ You can set up the project using pip.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/CURL_Custom_Implementation
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set curl_custom_implementation
+    cd curl_custom_implementation
     ```
 
 2.  **Create and activate a virtual environment:**
@@ -94,6 +96,7 @@ You can set up the project using pip.
 3.  **Install dependencies from `requirements.txt`:**
     ```bash
     pip install -r requirements.txt
+    ```
 
 ### Running Training
 

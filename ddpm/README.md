@@ -79,8 +79,10 @@ You can set up the project using either Conda (recommended for CUDA) or pip.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/DDPM
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set ddpm
+    cd ddpm
     ```
 
 2.  **Create and activate a conda environment from `requirements_conda.txt`:**
@@ -166,7 +168,6 @@ Organize your custom dataset in a directory structure that is easy to access. Fo
 
 2.  **Edit the new config file (`config/my_dataset_config.json`):**
     Open `config/my_dataset_config.json` and modify the following parameters to match your dataset:
-
     - `data_path`: Specify the path to your custom dataset directory.
     - `image_size`: Set the desired image dimensions (e.g., `64` for 64x64 pixels). All images will be resized to this.
     - `in_channels`: Number of color channels in your images (e.g., `1` for grayscale, `3` for RGB).

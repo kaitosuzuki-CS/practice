@@ -69,8 +69,10 @@ betavae/
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/betaVAE_CompLoss
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set betavae_comploss
+    cd betavae_comploss
     ```
 
 2.  Set up the environment:

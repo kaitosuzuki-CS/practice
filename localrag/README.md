@@ -21,8 +21,10 @@ Before you begin, ensure you have the following installed:
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/LocalRAG
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set localrag
+    cd localrag
     ```
 
 2.  **Create and activate a Python virtual environment:**

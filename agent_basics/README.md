@@ -35,8 +35,10 @@ The project is organized into two main directories:
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/AgentBasics
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set agent_basics
+    cd agent_basics
     ```
 
 2.  **Create a virtual environment:**

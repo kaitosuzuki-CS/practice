@@ -64,8 +64,10 @@ Configurations are managed via YAML files in the `configs/` directory, allowing 
 ### Clone the Repo
 
 ```bash
-git clone https://github.com/kaitosuzuki-CS/practice.git
-cd Practice/RecursiveTransformer
+git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+cd practice
+git sparse-checkout set recursive_transformer
+cd recursive_transformer
 ```
 
 ### Setting Up
