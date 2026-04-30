@@ -57,9 +57,6 @@ class FlowMatchingCFG:
         self.checkpoint_freq = int(getattr(self._train_hps, "checkpoint_freq", 10))
 
         self.im_size = tuple(map(int, self.data_hps.im_size))
-        self.samples_dir = os.path.join(
-            parent_dir, str(getattr(self._train_hps, "samples_dir", "samples"))
-        )
         self.dropout_rate = float(self._train_hps.dropout_rate)
         self.seed = int(getattr(self._train_hps, "seed", 42))
 
@@ -234,7 +231,7 @@ class FlowMatchingCFG:
         num_samples,
         num_timesteps,
         batch_size=None,
-        save_path="samples.png",
+        save_path="samples/samples.png",
         nrow: int = 8,
         padding: int = 4,
         dpi: int = 300,
@@ -291,8 +288,12 @@ class FlowMatchingCFG:
         labels = labels.detach().cpu()
 
         if save_path is not None:
-            os.makedirs(self.samples_dir, exist_ok=True)
-            save_path = os.path.join(parent_dir, self.samples_dir, save_path)
+            save_path = Path(save_path)
+            save_dir = save_path.resolve().parent
+
+            os.makedirs(save_dir, exist_ok=True)
+
+            save_path = os.path.join(parent_dir, save_dir, save_path)
             save_grid(generated_samples, labels, save_path, nrow, padding, dpi)
 
         return generated_samples, labels
