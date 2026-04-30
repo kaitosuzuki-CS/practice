@@ -80,8 +80,10 @@ Ensure you have [Anaconda](https://www.anaconda.com/) or [Miniconda](https://doc
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/kaitosuzuki-CS/practice.git
-    cd Practice/PPO_Custom_Implementation
+    git clone --filter=blob:none --sparse https://github.com/kaitosuzuki-CS/practice.git
+    cd practice
+    git sparse-checkout set ppo_custom_implementation
+    cd ppo_custom_implementation
     ```
 
 2.  **Install dependencies**:
@@ -90,14 +92,14 @@ Ensure you have [Anaconda](https://www.anaconda.com/) or [Miniconda](https://doc
 
     ```bash
     conda env create -f environment.yml
-    conda activate ppo_custom_implementation
+    conda activate ppo
     ```
 
     **Option 2: Using Pip**
 
     ```bash
-    conda create -n ppo_custom_implementation python=3.12
-    conda activate ppo_custom_implementation
+    conda create -n ppo python=3.12
+    conda activate ppo
     pip install -r requirements.txt
     ```
 
