@@ -18,16 +18,31 @@ This project explores the implementation of Flow Matching, a generative modeling
 ### Flow Matching (Linear Probabilistic Paths)
 
 The model learns a vector field $v_\theta(x_t, t)$ that generates a probability path between noise $x_0 \sim p_0$ and data $x_1 \sim p_1$. Using **Linear Probabilistic Paths**, the intermediate samples $x_t$ are defined by linear interpolation:
-$$x_t = (1 - t)x_0 + t x_1$$
+
+$$
+x_t = (1 - t)x_0 + t x_1
+$$
+
 The corresponding target velocity is:
-$$u_t(x_1 | x_0) = \frac{dx_t}{dt} = x_1 - x_0$$
+
+$$
+u_t(x_1 | x_0) = \frac{dx_t}{dt} = x_1 - x_0
+$$
+
 The model is trained to minimize the flow matching objective:
-$$\mathcal{L}_{FM} = \mathbb{E}_{t, q(x_t|x_1)} [\| v_\theta(x_t, t) - (x_1 - x_0) \|^2]$$
+
+$$
+\mathcal{L}_{FM} = \mathbb{E}_{t, q(x_t|x_1)} [\| v_\theta(x_t, t) - (x_1 - x_0) \|^2]
+$$
 
 ### Classifier-Free Guidance (CFG)
 
 To enhance class-conditional generation, we employ Classifier-Free Guidance. During training, the class label $y$ is randomly dropped (replaced with a null token $\emptyset$) with a certain probability. During inference, the velocity field is extrapolated using a guidance scale $\beta$:
-$$\hat{v}_\theta(x_t, t, y) = (1 + \beta) v_\theta(x_t, t, y) - \beta v_\theta(x_t, t, \emptyset)$$
+
+$$
+\hat{v}_\theta(x_t, t, y) = (1 + \beta) v_\theta(x_t, t, y) - \beta v_\theta(x_t, t, \emptyset)
+$$
+
 This allows for a trade-off between sample diversity and class consistency.
 
 Key features include:
