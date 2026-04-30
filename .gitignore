@@ -93,15 +93,15 @@ dmypy.json
 # --- Cython ---
 cython_debug/
 
-# --- Machine Learning / Deep Learning ---
-# Ignore model checkpoints and weights
-*.pt
-*.pth
-*.ckpt
-*.h5
-*.model
-*.weights
-*.onnx
+# # --- Machine Learning / Deep Learning ---
+# # Ignore model checkpoints and weights
+# *.pt
+# *.pth
+# *.ckpt
+# *.h5
+# *.model
+# *.weights
+# *.onnx
 
 # TensorBoard / Loggers
 runs/
