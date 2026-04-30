@@ -11,7 +11,7 @@ if __name__ == "__main__":
         description="Train Classifier-Free Guidance FLow Matching on MNIST"
     )
     parser.add_argument(
-        "--model-config-paht",
+        "--model-config-path",
         type=str,
         default="configs/model_config.yml",
         help="Path to the model config file.",
