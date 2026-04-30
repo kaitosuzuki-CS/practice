@@ -257,12 +257,17 @@ class FlowMatchingCFG:
                 B = min(batch_size, num_samples - N)
 
                 xt = torch.randn(
+                    B,
                     self.model.im_channels,
-                    *self._train_hps.im_size,
+                    *self.im_size,
                     device=self._device,
                 )
                 label = torch.randint(
-                    0, self.model.num_classes, dtype=torch.long, device=self._device
+                    0,
+                    self.model.num_classes,
+                    (B,),
+                    dtype=torch.long,
+                    device=self._device,
                 )
 
                 for _t in tqdm(t, leave=False):
