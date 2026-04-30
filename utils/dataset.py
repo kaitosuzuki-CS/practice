@@ -14,7 +14,7 @@ def create_dataset(train_hps):
     transform = transforms.Compose(
         [
             transforms.ToTensor(),
-            transforms.Resize(tuple(data_hps.im_size)),
+            transforms.Resize(tuple(map(int, data_hps.im_size))),
             transforms.Normalize((0.5,), (0.5,)),
         ]
     )
@@ -33,7 +33,7 @@ def create_dataset(train_hps):
     )
     val_loader = DataLoader(
         val_dataset,
-        batch_size=int(data_hps.val_bs),
+        batch_size=int(data_hps.test_bs),
         shuffle=False,
         drop_last=False,
         num_workers=4,

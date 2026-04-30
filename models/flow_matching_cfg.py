@@ -33,6 +33,7 @@ class FlowMatchingCFG:
         self.optimizer_hps = self._train_hps.optimizer
         self.scheduler_hps = getattr(self._train_hps, "scheduler", None)
         self.early_stopping_hps = getattr(self._train_hps, "early_stopping", None)
+        self.data_hps = self._train_hps.data
 
         self.lr = float(self.optimizer_hps.lr)
         self.betas = tuple(
@@ -55,14 +56,18 @@ class FlowMatchingCFG:
         )
         self.checkpoint_freq = int(getattr(self._train_hps, "checkpoint_freq", 10))
 
+        self.im_size = tuple(map(int, self.data_hps.im_size))
         self.samples_dir = os.path.join(
             parent_dir, str(getattr(self._train_hps, "samples_dir", "samples"))
         )
-
         self.dropout_rate = float(self._train_hps.dropout_rate)
         self.seed = int(getattr(self._train_hps, "seed", 42))
 
     def _init_training_scheme(self):
+        assert (
+            self._train_loader and self._val_loader
+        ), "Need to be initialized with dataloaders"
+
         self.optim = Adam(
             params=self.model.parameters(),
             lr=self.lr,
@@ -228,9 +233,8 @@ class FlowMatchingCFG:
         ckpt_path,
         num_samples,
         num_timesteps,
-        im_size=(32, 32),
         batch_size=None,
-        save_path="results.png",
+        save_path="samples.png",
         nrow: int = 8,
         padding: int = 4,
         dpi: int = 300,
@@ -252,7 +256,11 @@ class FlowMatchingCFG:
             for N in range(0, num_samples, batch_size):
                 B = min(batch_size, num_samples - N)
 
-                xt = torch.randn(self.model.im_channels, *im_size, device=self._device)
+                xt = torch.randn(
+                    self.model.im_channels,
+                    *self._train_hps.im_size,
+                    device=self._device,
+                )
                 label = torch.randint(
                     0, self.model.num_classes, dtype=torch.long, device=self._device
                 )
@@ -271,12 +279,14 @@ class FlowMatchingCFG:
                 labels.append(label)
 
         generated_samples = torch.cat(generated_samples, dim=0)
+        generated_samples = generated_samples * 0.5 + 0.5
         generated_samples = generated_samples.detach().cpu()
 
         labels = torch.cat(labels, dim=0)
         labels = labels.detach().cpu()
 
         if save_path is not None:
+            os.makedirs(self.samples_dir, exist_ok=True)
             save_path = os.path.join(parent_dir, self.samples_dir, save_path)
             save_grid(generated_samples, labels, save_path, nrow, padding, dpi)
 
